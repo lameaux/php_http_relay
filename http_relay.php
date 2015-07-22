@@ -45,8 +45,21 @@ function proxy_url($url) {
     $response = curl_exec($ch);
     curl_close($ch);
     
+    if ($response === FALSE) {
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Bad Gateway', true, 502);
+        die();
+    }
+    
     list($headers_raw, $body) = explode("\r\n\r\n", $response, 2);
     $headers = explode("\r\n", $headers_raw);
+    
+    $headers = array_filter($headers, function($header){
+        if (!strstr($header, ':')) return true;
+        $ignored = array('transfer-encoding', 'via', 'x-powered-by');
+        list($name, $value) = explode(':', $header, 2);
+        return !in_array(strtolower($name), $ignored);
+    });
+    
     foreach ($headers as $header) {
         header($header);        
     }   
