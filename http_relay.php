@@ -53,15 +53,15 @@ function proxy_url($url) {
     list($headers_raw, $body) = explode("\r\n\r\n", $response, 2);
     $headers = explode("\r\n", $headers_raw);
     
-    $headers = array_filter($headers, function($header){
-        if (!strstr($header, ':')) return true;
-        $ignored = array('transfer-encoding', 'via', 'x-powered-by');
-        list($name, $value) = explode(':', $header, 2);
-        return !in_array(strtolower($name), $ignored);
-    });
-    
     foreach ($headers as $header) {
         header($header);        
-    }   
+    }
+    
+    $headers_to_remove = array('transfer-encoding', 'via', 'x-powered-by');
+    foreach ($headers_to_remove as $header) {
+      header_remove($header);
+    }
+    
     echo $body;
+    die();
 } 
