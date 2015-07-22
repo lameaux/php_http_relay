@@ -31,7 +31,7 @@ function proxy_url($url) {
         curl_setopt($ch, CURLOPT_PROXY, PROXY);
     }
 
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0); // safemode or openbasedir
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_HEADER, 1);
     //curl_setopt($ch, CURLOPT_VERBOSE, 1); 
@@ -43,16 +43,31 @@ function proxy_url($url) {
     
     curl_setopt ($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
     $response = curl_exec($ch);
+    $status = curl_getinfo($ch);
     curl_close($ch);
     
     if ($response === FALSE) {
-        header($_SERVER['SERVER_PROTOCOL'] . ' 502 Bad Gateway', true, 502);
-        die();
+        badGateway();
     }
-    
+
     list($headers_raw, $body) = explode("\r\n\r\n", $response, 2);
-    $headers = explode("\r\n", $headers_raw);
-    
+
+
+    if($status['http_code'] != 200){
+      if($status['http_code'] == 301 || $status['http_code'] == 302) {
+        $matches = array();
+        preg_match("/(Location:|URI:)[^(\n)]*/", $headers_raw, $matches);
+        $url = trim(str_replace($matches[1],"",$matches[0]));
+        $url_parsed = parse_url($url);
+        if (!$url_parsed || !strstr($url_parsed['scheme'], 'http')) {
+          badGateway();  
+        }
+        proxy_url($url);
+        die();
+      }
+    }
+
+    $headers = explode("\r\n", $headers_raw);    
     foreach ($headers as $header) {
         header($header);        
     }
@@ -65,3 +80,9 @@ function proxy_url($url) {
     echo $body;
     die();
 } 
+
+
+function badGateway() {
+  header($_SERVER['SERVER_PROTOCOL'] . ' 502 Bad Gateway', true, 502);
+  die();
+}
