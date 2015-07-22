@@ -27,7 +27,7 @@ function proxy_node_url($node_url, $url, $step) {
 function proxy_url($url) {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    if (defined(PROXY)) {
+    if (defined('PROXY')) {
         curl_setopt($ch, CURLOPT_PROXY, PROXY);
     }
 
