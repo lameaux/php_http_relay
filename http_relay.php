@@ -1,14 +1,13 @@
 <?php
 
-//set_time_limit(60);
-
-// configuration
-define('PROXY', 'internet2.eu.wallstreetsystems.com:8080');
-
-$nodes = array('http://localhost:8000/http_relay.php');
-
 if (empty($_GET['url'])) {
     die('OK');
+}
+
+$nodes = array();
+// load configuration
+if (file_exists('config.php')) {
+    include 'config.php';
 }
 
 $url = $_GET['url'];
