@@ -60,9 +60,8 @@ function proxy_url($url) {
     // ssl        
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-    // timeouts           
+    // connect timeout           
     curl_setopt ($ch, CURLOPT_CONNECTTIMEOUT, 10);
-    curl_setopt ($ch, CURLOPT_TIMEOUT, 30);    
     // user agent
     curl_setopt ($ch, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
 
@@ -105,6 +104,8 @@ function curlWriteBody($ch,$str) {
         }
         sendHeaders();    
     }
+    // increase script execution time
+    set_time_limit(30);    
     echo $str;
     return strlen($str);
 }
