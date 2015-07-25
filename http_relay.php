@@ -105,7 +105,7 @@ function curlWriteBody($ch,$str) {
         sendHeaders();    
     }
     // increase script execution time
-    set_time_limit(30);    
+    @set_time_limit(30);    
     echo $str;
     return strlen($str);
 }
