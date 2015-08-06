@@ -9,6 +9,8 @@ var url = args[1];
 var page = require('webpage').create();
 page.settings.userAgent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A406 Safari/8536.25';
 page.settings.resourceTimeout = 5000; // 5 seconds
+page.settings.loadImages=false;
+
 
 var headers = '';
 
