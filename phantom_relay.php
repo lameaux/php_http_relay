@@ -46,7 +46,7 @@ foreach ($headers_to_remove as $header) {
 } 
 */
 // replace content type
-header('Content-type: text/plain');
+header('Content-type: text/plain', true);
 
 $body = $response[1];
 echo $body;
